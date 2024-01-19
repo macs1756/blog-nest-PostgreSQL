@@ -26,12 +26,11 @@ export class PostService {
   }
 
   async update(id: number, updatePostDto: UpdatePostDto) {
-
-    
-    const updateElement = this.postRepository.findOneBy({ id });
+    const updateElement = await this.postRepository.findOne({ where: { id } });
 
     if (updateElement) {
-      const updatedUser = { id, ...updateElement, ...updatePostDto };
+      const updatedUser = { ...updateElement, ...updatePostDto };
+
       await this.postRepository.save(updatedUser);
       return updatedUser;
     } else {
