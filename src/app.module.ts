@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PostModule } from './post/post.module';
 import { Post } from './post/postSchema';
+import { RolesModule } from './roles/roles.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { Post } from './post/postSchema';
       synchronize: true,
     }),
     PostModule,
+    RolesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
