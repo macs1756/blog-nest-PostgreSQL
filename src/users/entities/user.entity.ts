@@ -13,6 +13,6 @@ export class User {
   password: string;
 
   @OneToMany(() => Role, role => role.type)
-  role: Role[]
+  role: string
 }
 
