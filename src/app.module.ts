@@ -6,6 +6,7 @@ import { PostModule } from './post/post.module';
 import { Post } from './post/postSchema';
 import { RolesModule } from './roles/roles.module';
 import { Role } from './roles/rolesSchema';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { Role } from './roles/rolesSchema';
     }),
     PostModule,
     RolesModule,
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
