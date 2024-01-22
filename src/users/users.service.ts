@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -15,16 +15,22 @@ export class UsersService {
 
 
   async create(createUserDto: CreateUserDto) {
-
-    const newUser = await this.userRepository.create(createUserDto)
-
-    this.userRepository.save(newUser)
-
-    return newUser;
+     
+    const newUser = this.userRepository.create(createUserDto);
+    try {
+      const savedUser = await this.userRepository.save(newUser);
+  
+      return savedUser;
+    } catch (error) {
+      // Обробка помилки, якщо щось пішло не так під час збереження
+      console.error('Error saving user:', error.message);
+      throw new Error('Could not save user.');
+    }
   }
+  
 
   findAll() {
-    return `This action returns all users`;
+    return this.userRepository.find()
   }
 
   findOne(id: number) {
@@ -35,7 +41,15 @@ export class UsersService {
     return `This action updates a #${id} user`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async remove(id: number) {
+
+    const user = await this.userRepository.findOne({where: { id }});
+    if (!user) {
+      throw new NotFoundException(`User with ID ${id} not found`);
+    }
+
+    await this.userRepository.delete(id);
+
+    return 'Delete is Successful'
   }
 }

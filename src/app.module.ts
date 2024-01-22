@@ -6,6 +6,7 @@ import { PostModule } from './post/post.module';
 import { Post } from './post/postSchema';
 import { RolesModule } from './roles/roles.module';
 import { Role } from './roles/rolesSchema';
+import { User } from './users/entities/user.entity';
 import { UsersModule } from './users/users.module';
 
 @Module({
@@ -17,7 +18,7 @@ import { UsersModule } from './users/users.module';
       username: 'postgres',
       password: 'admin',
       database: 'blog',
-      entities: [Post, Role],
+      entities: [Post, Role, User],
       synchronize: true,
     }),
     PostModule,
