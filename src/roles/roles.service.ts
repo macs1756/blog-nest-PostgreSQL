@@ -10,6 +10,7 @@ import { User } from 'src/users/entities/user.entity';
 export class RolesService {
   constructor(
     @InjectRepository(Role)
+    @InjectRepository(User)
     private roleRepository: Repository<Role>,
     private userRepository: Repository<User>
   ) {}
