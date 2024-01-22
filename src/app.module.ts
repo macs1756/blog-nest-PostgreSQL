@@ -5,7 +5,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { PostModule } from './post/post.module';
 import { Post } from './post/postSchema';
 import { RolesModule } from './roles/roles.module';
-import { Role } from './roles/rolesSchema';
+import { Role } from 'src/roles/entities/role.entity';
+import { User } from './users/entities/user.entity';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -16,11 +18,12 @@ import { Role } from './roles/rolesSchema';
       username: 'postgres',
       password: 'admin',
       database: 'blog',
-      entities: [Post, Role],
+      entities: [Post, Role, User],
       synchronize: true,
     }),
     PostModule,
     RolesModule,
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreatePostDto } from './dto/create-post.dto';
@@ -34,7 +34,7 @@ export class PostService {
       await this.postRepository.save(updatedUser);
       return updatedUser;
     } else {
-      return 'Not found post';
+      throw new HttpException('Post not found', 404);
     }
   }
 
