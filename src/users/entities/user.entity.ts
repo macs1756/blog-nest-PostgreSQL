@@ -1,6 +1,5 @@
-import { type } from 'os';
-import { Role } from 'src/roles/rolesSchema';
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany, JoinColumn } from 'typeorm';
+import { Role } from 'src/roles/entities/role.entity';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, JoinTable } from 'typeorm';
 
 
 @Entity()
@@ -14,9 +13,10 @@ export class User {
   @Column()
   password: string;
   
-  @OneToMany(type => Role, role => role.id)
-  @JoinColumn({name: "role_id"})
 
-  role: Role;
+  @ManyToMany(() => Role)
+  @JoinTable()
+  roles: Role[]
+
 }
 
