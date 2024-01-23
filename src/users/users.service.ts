@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
+import { getConnection } from 'typeorm';
 
 @Injectable()
 export class UsersService {
@@ -14,11 +15,11 @@ export class UsersService {
     private userRepository: Repository<User>,
     @InjectRepository(Role)
     private roleRepository: Repository<Role>,
-  ) {}
+  ) { }
 
   async create(createUserDto: CreateUserDto) {
-     
-  
+
+
     const newUser = this.userRepository.create();
 
     newUser.email = createUserDto.email
@@ -27,29 +28,41 @@ export class UsersService {
 
     const roleArr = createUserDto.roles
 
-    for (const id of roleArr) {
-      const currentUser = await this.roleRepository.findOne({where: { id }});
-      
-      if (currentUser) {
-        newUser.roles.push(currentUser);
+    for (const type of roleArr) {
+
+      const currentRole = await this.roleRepository.findOne({ where: { type } });
+
+      if (currentRole) {
+        newUser.roles.push(currentRole);
       }
     }
 
 
     try {
       const savedUser = await this.userRepository.save(newUser);
+
+      for (const type of roleArr) {
+        const currentRole = await this.roleRepository.findOne({
+          where: { type },
+          relations: ['users'], 
+        });
   
+        if (currentRole) {
+          currentRole.users.push(savedUser);
+          await this.roleRepository.save(currentRole);
+        } 
+      }
+      
       return savedUser;
     } catch (error) {
-      // Обробка помилки, якщо щось пішло не так під час збереження
       console.error('Error saving user:', error.message);
       throw new Error('Could not save user.');
     }
   }
-  
+
 
   findAll() {
-    return this.userRepository.find({relations: ['roles']})
+    return this.userRepository.find({ relations: ['roles'] })
   }
 
   findOne(id: number) {
@@ -62,7 +75,7 @@ export class UsersService {
 
   async remove(id: number) {
 
-    const user = await this.userRepository.findOne({where: { id }});
+    const user = await this.userRepository.findOne({ where: { id } });
     if (!user) {
       throw new NotFoundException(`User with ID ${id} not found`);
     }
