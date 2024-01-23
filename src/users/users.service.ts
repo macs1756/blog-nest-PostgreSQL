@@ -81,7 +81,29 @@ export class UsersService {
   }
 
   async login(loginUserDto) {
-    return loginUserDto;
+
+    const { email, password } = loginUserDto
+    const JWT_SICRET = this.envService.get<string>('JWT_SICRET')
+
+    const user = await this.userRepository.findOne({ where: { email }, });
+
+    if (user) {
+
+      const isValidPassword = await bcrypt.compare(password, user.password);
+
+      if(isValidPassword){
+        const jwtToken = jwt.sign({ id: user.id }, JWT_SICRET);
+        return { jwt: jwtToken }
+      }else{
+        throw new NotFoundException(`User password is incorrect`)
+      }
+
+      
+    } else {
+      throw new NotFoundException(`User with ${email} not found`)
+    }
+
+
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {
