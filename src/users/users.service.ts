@@ -1,10 +1,13 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Role } from 'src/roles/entities/role.entity';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
+import * as bcrypt from 'bcrypt';
+import * as jwt from 'jsonwebtoken';
 
 
 @Injectable()
@@ -15,6 +18,7 @@ export class UsersService {
     private userRepository: Repository<User>,
     @InjectRepository(Role)
     private roleRepository: Repository<Role>,
+    private readonly envService: ConfigService
   ) { }
 
 
@@ -22,6 +26,7 @@ export class UsersService {
   async create(createUserDto: CreateUserDto) {
 
     const newUser = this.userRepository.create();
+    const JWT_SICRET = this.envService.get<string>('JWT_SICRET')
 
     newUser.email = createUserDto.email
     newUser.password = createUserDto.password
@@ -45,22 +50,29 @@ export class UsersService {
       for (const type of roleArr) {
         const currentRole = await this.roleRepository.findOne({
           where: { type },
-          relations: ['users'], 
+          relations: ['users'],
         });
-  
+
         if (currentRole) {
           currentRole.users.push(savedUser);
           await this.roleRepository.save(currentRole);
-        } 
+        }
       }
-      
-      return savedUser;
+
+      if (savedUser) {
+        const jwtToken = jwt.sign({ id: savedUser.id }, JWT_SICRET);
+        return { jwt: jwtToken, savedUser };
+      } else {
+        throw new Error('Could not save user.');
+      }
+
+
     } catch (error) {
       console.error('Error saving user:', error.message);
       throw new Error('Could not save user.');
     }
   }
-// -------------------------------------REGISTER-----------------------------------------------------
+  // -------------------------------------REGISTER-----------------------------------------------------
 
   findAll() {
     return this.userRepository.find({ relations: ['roles'] })
