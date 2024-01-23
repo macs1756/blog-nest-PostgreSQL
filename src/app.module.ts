@@ -3,23 +3,29 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PostModule } from './post/post.module';
-import { Post } from './post/postSchema';
+import { Post } from './post/entities/post.entity';
 import { RolesModule } from './roles/roles.module';
 import { Role } from 'src/roles/entities/role.entity';
 import { User } from './users/entities/user.entity';
 import { UsersModule } from './users/users.module';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: 'localhost',
-      port: 4444,
-      username: 'postgres',
-      password: 'admin',
-      database: 'blog',
-      entities: [Post, Role, User],
-      synchronize: true,
+    ConfigModule.forRoot(),
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
+        type: 'postgres',
+        host: configService.get<string>('DATABASE_HOST'),
+        port: configService.get<number>('DATABASE_PORT'),
+        username: configService.get<string>('DATABASE_LOGIN'),
+        password: configService.get<string>('DATABASE_PASSWORD'),
+        database: configService.get<string>('DATABASE_NAME'),
+        entities: [Post, Role, User],
+        synchronize: true,
+      }),
+      inject: [ConfigService],
     }),
     PostModule,
     RolesModule,
@@ -29,3 +35,4 @@ import { UsersModule } from './users/users.module';
   providers: [AppService],
 })
 export class AppModule {}
+

@@ -2,5 +2,5 @@
 export class CreateUserDto {
   email: string;
 	password: string;
-  roles: number[];
+  roles: string[];
 }
