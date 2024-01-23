@@ -5,7 +5,7 @@ import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
-import { getConnection } from 'typeorm';
+
 
 @Injectable()
 export class UsersService {
@@ -17,8 +17,9 @@ export class UsersService {
     private roleRepository: Repository<Role>,
   ) { }
 
-  async create(createUserDto: CreateUserDto) {
 
+  // -------------------------------------REGISTER-----------------------------------------------------
+  async create(createUserDto: CreateUserDto) {
 
     const newUser = this.userRepository.create();
 
@@ -59,7 +60,7 @@ export class UsersService {
       throw new Error('Could not save user.');
     }
   }
-
+// -------------------------------------REGISTER-----------------------------------------------------
 
   findAll() {
     return this.userRepository.find({ relations: ['roles'] })
