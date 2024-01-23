@@ -28,8 +28,10 @@ export class UsersService {
     const newUser = this.userRepository.create();
     const JWT_SICRET = this.envService.get<string>('JWT_SICRET')
 
+    const hashPassword = await bcrypt.hash(createUserDto.password, 10);
+
     newUser.email = createUserDto.email
-    newUser.password = createUserDto.password
+    newUser.password = hashPassword
     newUser.roles = []
 
     const roleArr = createUserDto.roles
@@ -78,8 +80,30 @@ export class UsersService {
     return this.userRepository.find({ relations: ['roles'] })
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async login(loginUserDto) {
+
+    const { email, password } = loginUserDto
+    const JWT_SICRET = this.envService.get<string>('JWT_SICRET')
+
+    const user = await this.userRepository.findOne({ where: { email }, });
+
+    if (user) {
+
+      const isValidPassword = await bcrypt.compare(password, user.password);
+
+      if(isValidPassword){
+        const jwtToken = jwt.sign({ id: user.id }, JWT_SICRET);
+        return { jwt: jwtToken }
+      }else{
+        throw new NotFoundException(`User password is incorrect`)
+      }
+
+      
+    } else {
+      throw new NotFoundException(`User with ${email} not found`)
+    }
+
+
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {
