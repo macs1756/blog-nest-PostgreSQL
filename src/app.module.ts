@@ -1,6 +1,4 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PostModule } from './post/post.module';
 import { Post } from './post/entities/post.entity';
@@ -9,6 +7,10 @@ import { Role } from 'src/roles/entities/role.entity';
 import { User } from './users/entities/user.entity';
 import { UsersModule } from './users/users.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { UploadModule } from './upload/upload.module';
+import { Upload } from './upload/entities/upload.entity';
+import { ArchiveModule } from './archive/archive.module';
+import { Archive } from './archive/entities/archive.entity';
 
 @Module({
   imports: [
@@ -22,7 +24,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
         username: configService.get<string>('DATABASE_LOGIN'),
         password: configService.get<string>('DATABASE_PASSWORD'),
         database: configService.get<string>('DATABASE_NAME'),
-        entities: [Post, Role, User],
+        entities: [Post, Role, User, Upload, Archive],
         synchronize: true,
       }),
       inject: [ConfigService],
@@ -30,9 +32,10 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     PostModule,
     RolesModule,
     UsersModule,
+    UploadModule,
+    ArchiveModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
+
 })
 export class AppModule {}
 

@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Role } from 'src/roles/entities/role.entity';
@@ -25,12 +25,19 @@ export class UsersService {
   // -------------------------------------REGISTER-----------------------------------------------------
   async create(createUserDto: CreateUserDto) {
 
+    const { email } = createUserDto
+
+    const isUsedEmail = await this.userRepository.find({where: { email }})
+
+    if (isUsedEmail[0]?.id) throw new HttpException("This email is already in used", 501);
+    
     const newUser = this.userRepository.create();
     const JWT_SICRET = this.envService.get<string>('JWT_SICRET')
 
+    
     const hashPassword = await bcrypt.hash(createUserDto.password, 10);
 
-    newUser.email = createUserDto.email
+    newUser.email = email
     newUser.password = hashPassword
     newUser.roles = []
 
@@ -80,6 +87,7 @@ export class UsersService {
     return this.userRepository.find({ relations: ['roles'] })
   }
 
+  
   async login(loginUserDto) {
 
     const { email, password } = loginUserDto
