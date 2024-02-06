@@ -16,6 +16,6 @@ export class ArchiveModule implements NestModule{
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(checkAuth)
-      .forRoutes({ path: '*', method: RequestMethod.ALL });
+      .forRoutes({ path: 'archive*', method: RequestMethod.ALL });
   }
 }
