@@ -7,9 +7,9 @@ import { UpdateArchiveDto } from './dto/update-archive.dto';
 export class ArchiveService {
   
 
-  create(createArchiveDto: CreateArchiveDto,  middlewareData: any) {
+  create(createArchiveDto: CreateArchiveDto, token) {
 
-    return middlewareData;
+    return token;
   }
 
   findAll() {

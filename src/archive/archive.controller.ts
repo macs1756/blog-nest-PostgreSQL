@@ -2,14 +2,15 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { ArchiveService } from './archive.service';
 import { CreateArchiveDto } from './dto/create-archive.dto';
 import { UpdateArchiveDto } from './dto/update-archive.dto';
+import { TOKEN } from '../../decorators/token.decorator';
 
 @Controller('archive')
 export class ArchiveController {
   constructor(private readonly archiveService: ArchiveService) {}
 
   @Post()
-  create(@Body() createArchiveDto: CreateArchiveDto, middlewareData: any) {
-    return this.archiveService.create(createArchiveDto, middlewareData);
+  create(@Body() createArchiveDto: CreateArchiveDto, @TOKEN() token) {
+    return this.archiveService.create(createArchiveDto, token);
   }
 
   @Get()

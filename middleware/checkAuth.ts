@@ -3,6 +3,12 @@ import { ConfigService } from '@nestjs/config';
 import { Request, Response, NextFunction } from 'express';
 import * as jwt from 'jsonwebtoken';
 
+declare module 'express' {
+  interface Request {
+    decodedToken?: any; 
+  }
+}
+
 @Injectable()
 export default class MyMiddleware implements NestMiddleware {
   
@@ -16,9 +22,10 @@ export default class MyMiddleware implements NestMiddleware {
 
     if (token) {
       try {
-        
+
         const decodedToken = await jwt.verify(token, this.envService.get<string>('JWT_SICRET'));
-        next(decodedToken);
+        req.decodedToken = decodedToken
+        next();
 
       } catch (error) {
         return res.status(403).json({ message: 'Forbidden' });
