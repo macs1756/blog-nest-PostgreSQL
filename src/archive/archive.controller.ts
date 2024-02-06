@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { ArchiveService } from './archive.service';
 import { CreateArchiveDto } from './dto/create-archive.dto';
 import { UpdateArchiveDto } from './dto/update-archive.dto';
-
+import jwt from 'jsonwebtoken'
 
 @Controller('archive')
 export class ArchiveController {
