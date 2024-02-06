@@ -1,11 +1,41 @@
 import { Injectable } from '@nestjs/common';
+import { writeFile } from 'fs';
 import { CreateUploadDto } from './dto/create-upload.dto';
-import { UpdateUploadDto } from './dto/update-upload.dto';
+import * as fs from 'fs-extra';
+
 
 @Injectable()
 export class UploadService {
-  create(createUploadDto: CreateUploadDto) {
-    return 'This action adds a new upload';
+
+
+  async create(file: Express.Multer.File, createUploadDto: CreateUploadDto) {
+
+    const { name } = createUploadDto
+
+    const uploadFolder = `/uploads/${name}`
+
+    await fs.ensureDir(uploadFolder)
+    
+    
+    try {
+      await fs.ensureDir(uploadFolder);
+      console.log('Folder created successfully');
+    } catch (err) {
+      console.error('Error creating folder:', err);
+      throw err; // Rethrow the error or handle it appropriately
+    }
+
+    const url = `${uploadFolder}/${file.originalname}`
+
+    await writeFile(url, file.buffer, (err) => {
+      if (err) {
+        console.error('Error writing to file:', err);
+        return;
+      }
+      return {file, url}
+    })
+
+    ;
   }
 
   findAll() {
@@ -16,11 +46,4 @@ export class UploadService {
     return `This action returns a #${id} upload`;
   }
 
-  update(id: number, updateUploadDto: UpdateUploadDto) {
-    return `This action updates a #${id} upload`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} upload`;
-  }
 }

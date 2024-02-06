@@ -1,1 +1,4 @@
-export class CreateUploadDto {}
+
+export class CreateUploadDto {
+  name: string;
+}
