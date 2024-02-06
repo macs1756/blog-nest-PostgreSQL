@@ -1,41 +1,51 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { writeFile } from 'fs';
 import { CreateUploadDto } from './dto/create-upload.dto';
 import * as fs from 'fs-extra';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Upload } from './entities/upload.entity';
+import { Repository } from 'typeorm';
 
 
 @Injectable()
 export class UploadService {
-
+  constructor(
+    @InjectRepository(Upload)
+    private uploadRepository: Repository<Upload>,
+  ) { }
 
   async create(file: Express.Multer.File, createUploadDto: CreateUploadDto) {
 
-    const { name } = createUploadDto
 
-    const uploadFolder = `/uploads/${name}`
-
-    await fs.ensureDir(uploadFolder)
-    
-    
     try {
-      await fs.ensureDir(uploadFolder);
-      console.log('Folder created successfully');
-    } catch (err) {
-      console.error('Error creating folder:', err);
-      throw err; // Rethrow the error or handle it appropriately
-    }
+      
+      const { folder } = createUploadDto
+      const uploadFolder = `uploads/${folder + Date.now()}`
+      await fs.ensureDir(uploadFolder)
 
-    const url = `${uploadFolder}/${file.originalname}`
 
-    await writeFile(url, file.buffer, (err) => {
-      if (err) {
-        console.error('Error writing to file:', err);
-        return;
-      }
-      return {file, url}
-    })
+      const url = `${uploadFolder}/${file.originalname}`
 
-    ;
+    
+      // await writeFile(url, file.buffer, (err) => {
+      //   if (err) throw new HttpException(`Error writing to file: ${err}`, 500) 
+      // });
+
+      const newUploadInfomation = this.uploadRepository.create()
+
+      newUploadInfomation.name = 'test'
+      newUploadInfomation.url = 'tst'
+
+      this.uploadRepository.save(newUploadInfomation)
+
+      return newUploadInfomation
+
+    } catch (error) {
+      throw new HttpException(error, 500)
+    } 
+   
+
+
   }
 
   findAll() {

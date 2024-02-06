@@ -8,6 +8,7 @@ import { User } from './users/entities/user.entity';
 import { UsersModule } from './users/users.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UploadModule } from './upload/upload.module';
+import { Upload } from './upload/entities/upload.entity';
 
 @Module({
   imports: [
@@ -21,7 +22,7 @@ import { UploadModule } from './upload/upload.module';
         username: configService.get<string>('DATABASE_LOGIN'),
         password: configService.get<string>('DATABASE_PASSWORD'),
         database: configService.get<string>('DATABASE_NAME'),
-        entities: [Post, Role, User],
+        entities: [Post, Role, User, Upload],
         synchronize: true,
       }),
       inject: [ConfigService],
