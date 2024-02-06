@@ -9,6 +9,7 @@ import { UsersModule } from './users/users.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UploadModule } from './upload/upload.module';
 import { Upload } from './upload/entities/upload.entity';
+import { ArchiveModule } from './archive/archive.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { Upload } from './upload/entities/upload.entity';
     RolesModule,
     UsersModule,
     UploadModule,
+    ArchiveModule,
   ],
 
 })
