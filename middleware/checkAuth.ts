@@ -5,44 +5,26 @@ import * as jwt from 'jsonwebtoken';
 
 @Injectable()
 export default class MyMiddleware implements NestMiddleware {
+  
+
   constructor(
     private readonly envService: ConfigService
   ) { }
 
+  async use(req: Request, res: Response, next: NextFunction) {
+    const token = (req.headers.authorization || '').replace(/Bearer\s?/, '');
 
-  use(req: Request, res: Response, next: NextFunction) {
-    
-    const token = (req.headers.authorization || '').replace(/Bearer\s?/,'')
-
-    if(token){
-
+    if (token) {
       try {
-
-        const decoded = jwt.verify(token, this.envService.get<string>('JWT_SICRET'))
         
-        console.log(decoded);
-         
-        next()
+        const decodedToken = await jwt.verify(token, this.envService.get<string>('JWT_SICRET'));
+        next(decodedToken);
 
       } catch (error) {
-
-        console.log('this case');
-
-        return res.json({
-          messange: '403 Forbidden'
-        })
-
+        return res.status(403).json({ message: 'Forbidden' });
       }
-    }else{
-
-      
-
-      return res.json({
-        messange: '403 Forbidden'
-      })
-
+    } else {
+      return res.status(403).json({ message: 'Forbidden' });
     }
-
-    next(); 
   }
 }

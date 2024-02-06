@@ -9,7 +9,7 @@ import checkAuth from '../../middleware/checkAuth'
 @Module({
   imports: [TypeOrmModule.forFeature([Archive]), ConfigModule.forRoot()],
   controllers: [ArchiveController],
-  providers: [ArchiveService],
+  providers: [ArchiveService, checkAuth],
 })
 export class ArchiveModule implements NestModule{
   configure(consumer: MiddlewareConsumer) {

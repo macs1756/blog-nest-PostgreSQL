@@ -1,11 +1,15 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { CreateArchiveDto } from './dto/create-archive.dto';
 import { UpdateArchiveDto } from './dto/update-archive.dto';
 
+
 @Injectable()
 export class ArchiveService {
-  create(createArchiveDto: CreateArchiveDto) {
-    return 'This action adds a new archive';
+  
+
+  create(createArchiveDto: CreateArchiveDto,  middlewareData: any) {
+
+    return middlewareData;
   }
 
   findAll() {
