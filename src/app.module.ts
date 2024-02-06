@@ -10,6 +10,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UploadModule } from './upload/upload.module';
 import { Upload } from './upload/entities/upload.entity';
 import { ArchiveModule } from './archive/archive.module';
+import { Archive } from './archive/entities/archive.entity';
 
 @Module({
   imports: [
@@ -23,7 +24,7 @@ import { ArchiveModule } from './archive/archive.module';
         username: configService.get<string>('DATABASE_LOGIN'),
         password: configService.get<string>('DATABASE_PASSWORD'),
         database: configService.get<string>('DATABASE_NAME'),
-        entities: [Post, Role, User, Upload],
+        entities: [Post, Role, User, Upload, Archive],
         synchronize: true,
       }),
       inject: [ConfigService],
