@@ -1,6 +1,8 @@
-import { Column } from "typeorm";
+import { Column, Entity } from "typeorm";
 import { BaseColumns } from "utils/base";
 
+
+@Entity()
 export class Upload extends BaseColumns{
  
   @Column()
